@@ -1,6 +1,5 @@
 from telebot import TeleBot
 from cfg import TOKEN
-from functools import wraps
 from telebot import types
 import crypto
 
