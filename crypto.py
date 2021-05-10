@@ -4,8 +4,6 @@ from pycbrf import ExchangeRates
 import time
 
 
-
-
 def delete_brackets(elem):
     ans = ''
     state = False
@@ -17,14 +15,14 @@ def delete_brackets(elem):
         if state and (i != '<' and i != '>'):
             ans += i
     ans = ans.strip()
-    ans = ans.replace(',','.')
+    ans = ans.replace(',', '.')
     return ans
 
 
 def get_crypto_dict(url):
     r = requests.get(url)
     soup = bs(r.text, features='lxml')
-    table_time = soup.find('div', {'class':'currencies__date'})
+    table_time = soup.find('div', {'class': 'currencies__date'})
 
     add = False
     time = []
@@ -47,18 +45,17 @@ def get_crypto_dict(url):
             valuta *= delete_brackets(str(temp_btc[i])).find('USDT') == -1
             if valuta:
                 try:
-                    crypto_dict[delete_brackets(str(temp_btc[i]))] = int(delete_brackets(str(temp_btc[i+1]).replace(' ','')))
+                    crypto_dict[delete_brackets(str(temp_btc[i]))] = int(
+                        delete_brackets(str(temp_btc[i + 1]).replace(' ', '')))
                 except ValueError:
-                    crypto_dict[delete_brackets(str(temp_btc[i]))] = float(delete_brackets(str(temp_btc[i+1]).replace(' ','')))
+                    crypto_dict[delete_brackets(str(temp_btc[i]))] = float(
+                        delete_brackets(str(temp_btc[i + 1]).replace(' ', '')))
 
     return crypto_dict
 
 
-
-
-
 rbc = 'https://www.rbc.ru/crypto/'
+
 
 def rub():
     return float(ExchangeRates('2021-05-03')['USD'][4])
-

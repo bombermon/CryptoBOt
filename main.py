@@ -6,11 +6,11 @@ import crypto
 
 bot = TeleBot(TOKEN)
 
-
 commands = {
     'start': 'Start using this bot',
     'help': 'Useful information about this bot',
 }
+
 
 def get_crypto(crypto_dict, rub, name, currency='доллар'):
     names_dict = {'биткоин': 'BTC', 'bitcoin': 'BTC', 'эфир': 'ETH', 'эфириум': 'ETH'}
@@ -25,36 +25,28 @@ def get_crypto(crypto_dict, rub, name, currency='доллар'):
         return round(value * rub)
 
 
-
-# help command handler
-@bot.message_handler(commands=['help'])
-def command_help_handler(message):
-    help_text = 'The following commands are available: \n'
-    for key in commands:
-        help_text += '/' + key + ': '
-        help_text += commands[key] + '\n'
-    help_text += 'При помощи данного бота вы сможете узнать курс криптовалюты'
-    bot.send_message(message.chat.id, help_text)
-
-
 # ОСНОВА -------------------------------------------------------------------------
 state_was = True
+
+
 @bot.message_handler(commands=['start'])
 def welcome(message):
-
     markup = types.ReplyKeyboardMarkup(row_width=2)
     item_rub = types.KeyboardButton('Рубль')
     item_dol = types.KeyboardButton('Доллар')
     markup.add(item_dol, item_rub)
     send = bot.send_message(message.chat.id,
-                            """Приветствую, {0.first_name}!\nЯ помогу тебе узнать <b> курс криптовалют</b>\nВ какой валюте ты хочешь узнавать курс?""".format(message.from_user,
-                                                                                               bot.get_me()),
+                            """Приветствую, {0.first_name}!\nЯ помогу тебе узнать <b> курс криптовалют</b>\nВ какой валюте ты хочешь узнавать курс?""".format(
+                                message.from_user,
+                                bot.get_me()),
                             parse_mode='HTML', reply_markup=markup)
 
     bot.register_next_step_handler(send, get_course)
 
 
 state = None
+
+
 @bot.message_handler(content_type=['text'])
 def get_course(message):
     global state
@@ -85,9 +77,10 @@ def get_course(message):
     markup.add(item_btc, item_eth, item_eos, item_neo, item_xrp, item_omg, item_stop)
 
     send = bot.send_message(message.from_user.id, text_for,
-                                reply_markup=markup)
+                            reply_markup=markup)
 
     bot.register_next_step_handler(send, say_value)
+
 
 @bot.message_handler(content_type=['text'])
 def say_value(message):
@@ -110,6 +103,6 @@ def say_value(message):
 
         get_course(message)
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     bot.polling(none_stop=True, interval=0)
